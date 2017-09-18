@@ -28,11 +28,6 @@ class m170712_101044_import_doctors_ru extends Migration
             $this->importDegreeDoctors();
             $this->importPriceDoctors();
             $this->addPhotoDoctor();
-
-            // FIXME после всех операций удалить все дампы из базы
-//            $this->dropTable('doctors');
-//            $this->dropTable('educations');
-//            $this->dropTable('clinic_doctors_price');
         }
     }
 
