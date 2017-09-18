@@ -63,6 +63,7 @@ class OtherDoctors extends Widget
                     'subject_model' => SearchModel::MODEL_SPECIALIZATION,
                 ];
 
+                // add filter location 
                 if (!empty($metroIds)) {
                     $models = array_merge($models, ['metro_id' => $metroIds]);
                 }
@@ -72,7 +73,6 @@ class OtherDoctors extends Widget
                 if (!empty($district_id) && empty($metroIds)) {
                     $models = array_merge($models, ['district_id' => $district_id]);
                 }
-
 
                 $searchModel = \Yii::createObject($models);
 
@@ -84,13 +84,13 @@ class OtherDoctors extends Widget
             if (!empty($searchProvider)) {
                 foreach ($searchProvider->getIds() as $id) {
                     if ($id != $this->searchModel->subject_id) {
-                        // информация о враче
+                        // info doctors
                         $doctors[$keyClinic][] = Doctor::getDataById($id);
 
                         $doctorModel = Doctor::findOne($id);
                         $specs = $doctorModel->getSpecs()->all();
 
-                        // специализации для врача
+                        // specializations doctors
                         if (!empty($specs)) {
                             foreach ($specs as $spec) {
                                 $specLinks[] = Html::a(
@@ -111,7 +111,7 @@ class OtherDoctors extends Widget
         }
 
         /**
-         * Формирование массива врачей соответствующей клиники 
+         *  Formation of an array of physicians of the relevant clinic
          */
         $otherDoctor = [];
         if (!empty($doctors)) {
