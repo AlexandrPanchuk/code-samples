@@ -45,7 +45,7 @@ class m170712_101044_import_doctors_ru extends Migration
                 . ' < ' . Yii::getAlias(self::RU_DOCTORS));
         }
 
-        $data_doctors_ru = $this->db->createCommand("SELECT doctor_id, doctor_original_id , doctor_name FROM doctors ")->queryAll();
+        $data_doctors_ru = $this->db->createCommand("SELECT d_id, doctor_original_id , d_name FROM doc ")->queryAll();
 
         /** Preparation of doctors */
         $ru_doctors = $this->prepareDoctors($data_doctors_ru);
@@ -150,12 +150,12 @@ class m170712_101044_import_doctors_ru extends Migration
     public function relatedSpecializationDoctor()
     {
         $this->execute("
-          INSERT INTO dc_doctor_specialization (doctor_id, spec_id, for_links)
-          SELECT dc_doctor.doctor_id, spec_id, 0 AS for_links
-          FROM doctors
-          INNER JOIN dc_specialization
-          ON LOCATE(name, doctor_specialisation) > 0
-          INNER JOIN dc_doctor
+          INSERT INTO dds (d_id, spec_id, for_links)
+          SELECT dd.doc_id, spec_id, 0 AS for_links
+          FROM doc
+          INNER JOIN ds
+          ON LOCATE(name, ds) > 0
+          INNER JOIN dd
           ON doctor_original_id = dc_doctor.external_id");
     }
 
@@ -215,8 +215,8 @@ class m170712_101044_import_doctors_ru extends Migration
         }
         
         // insert dc_doctor_clinics
-        $this->execute("INSERT INTO dc_doctor_clinic (doctor_id, clinic_id, price)
-            SELECT doctor_id, clinic_id, clinic_doctor_price
+        $this->execute("INSERT INTO ddc (doc_id, clinic_id, price)
+            SELECT doc_id, clinic_id, clinic_doctor_price
             FROM clinic_doctors_price
             INNER JOIN dc_doctor ON clinic_doctors_price.clinic_doctor_original_id = dc_doctor.external_id
             INNER JOIN dc_clinic ON clinic_doctors_price.clinic_doctor_clinic_id = dc_clinic.external_id");
@@ -276,22 +276,22 @@ class m170712_101044_import_doctors_ru extends Migration
             $this->execute('SET FOREIGN_KEY_CHECKS=0');
 
             // import doctors
-            $this->truncateTable('dc_doctor');
-            $this->dropColumn('dc_doctor', 'external_id');
+            $this->truncateTable('dd');
+            $this->dropColumn('dd', 'ext_id');
 
             //educations doctors
-            $this->update('dc_doctor', ['full_desc' => null]);
-            $this->dropIndex('doctor_original-idx', 'dc_doctor');
+            $this->update('dd', ['desc' => null]);
+            $this->dropIndex('doctor_original-idx', 'dd');
 
             //specialization
-            $this->truncateTable('dc_specialization');
-            $this->truncateTable('dc_doctor_specialization');
+            $this->truncateTable('ds');
+            $this->truncateTable('dds');
 
             //doctor-clinic
-            $this->truncateTable('dc_doctor_clinic');
+            $this->truncateTable('ddc');
 
             //photo doctor
-            $this->truncateTable('dc_photo');
+            $this->truncateTable('dp');
 
             $this->execute('SET FOREIGN_KEY_CHECKS=1');
         }
