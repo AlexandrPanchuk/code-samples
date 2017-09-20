@@ -57,13 +57,13 @@ class BestDoctorsWidget extends Widget
                 if (!empty($this->specs)) {
 
                     $doctors = (new Query())
-                        ->select('doctor_id')->distinct()
-                        ->from('dc_doctor_specialization AS ds')
-                        ->innerJoin('dc_top AS t', 't.model_id = ds.doctor_id')
-                        ->where(['ds.spec_id' => array_column($this->specs, 'spec_id')])
-                        ->andWhere(['t.model' => Top::MODEL_DOCTOR])
-                        ->andWhere(['t.city_id' => $this->searchModel->city_id])
-                        ->andWhere(['<>', 'doctor_id', $this->modelDoctor->doctor_id])
+                        ->select('id')->distinct()
+                        ->from('dds AS ds')
+                        ->innerJoin('dt AS t', 't.mod_id = d.doc_id')
+                        ->where(['d.s_id' => array_column($this->specs, 's_id')])
+                        ->andWhere(['t.m' => Top::MODEL_DOCTOR])
+                        ->andWhere(['t.c_id' => $this->searchModel->c_id])
+                        ->andWhere(['<>', 'doc_id', $this->modelDoctor->d_id])
                         ->orderBy(['t.position' => SORT_DESC])
                         ->limit(4)
                         ->column();
@@ -73,10 +73,10 @@ class BestDoctorsWidget extends Widget
                                 $doctorModel = Doctor::findOne($id);
 
                                 $priceDoctor = (new Query())
-                                    ->select('max(dc_doctor_clinic.price) as max, min(dc_doctor_clinic.price) as min')
-                                    ->from('dc_doctor_clinic')
-                                    ->where(['doctor_id' => $id])
-                                    ->andWhere('dc_doctor_clinic.price <> 0')
+                                    ->select('max(ddc.price) as max, min(ddclinic.price) as min')
+                                    ->from('dcc')
+                                    ->where(['d_id' => $id])
+                                    ->andWhere('ddc.price <> 0')
                                     ->all();
 
                                 // If the minimum and maximum prices coincide - remove the minimum
