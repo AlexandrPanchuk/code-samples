@@ -34,12 +34,7 @@ class PriceFeedGenerator
     {
         self::log(sprintf("[%s] services", date('Y-m-d H:i:s')));
 
-        $sql = "SELECT cs.clinic_id
-                FROM dc_clinic_service as cs
-                INNER JOIN dc_service as s on s.service_id = cs.service_id
-                INNER JOIN dc_clinic as c on c.clinic_id = cs.clinic_id
-                WHERE c.is_active = 1 AND c.is_deleted = 0 AND c.city_id = :city_id
-                GROUP BY c.clinic_id";
+        $sql = "{query --> :city_id}";
 
         foreach (\Yii::$app->db->createCommand($sql, ['city_id' => $city->city_id])->query() as $row) {
             self::prepareFeed($row['clinic_id']);
@@ -52,12 +47,7 @@ class PriceFeedGenerator
     {
         self::log(sprintf("[%s] diagnostic", date('Y-m-d H:i:s')));
 
-        $sql = "SELECT cd.clinic_id
-                FROM dc_clinic_diagnostic as cd
-                INNER JOIN dc_diagnostic as d on d.diagnostic_id = cd.diagnostic_id
-                INNER JOIN dc_clinic as c on c.clinic_id = cd.clinic_id
-                WHERE c.is_active = 1 AND c.is_deleted = 0 AND c.city_id = :city_id
-                GROUP BY c.clinic_id";
+        $sql = "{query --> :city_id}";
 
         foreach (\Yii::$app->db->createCommand($sql, ['city_id' => $city->city_id])->query() as $row) {
             self::prepareFeed($row['clinic_id']);
